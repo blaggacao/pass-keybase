@@ -67,7 +67,7 @@ cmd_encrypt() {
   check_sneaky_paths "$path"
 
   if [[ -f $passfile ]]; then
-    $GPG -d "${GPG_OPTS[@]}" "$passfile" | keybase encrypt ${KEYBASE_RECIPIENTS[@]} -o $keybasefile
+    $GPG -d "${GPG_OPTS[@]}" "$passfile" | keybase encrypt ${KEYBASE_RECIPIENTS[@]} -o "$keybasefile"
     set_git "$keybasefile"
     git_add_file "$keybasefile" "Encrypt $path via keybase for user: ${KEYBASE_RECIPIENTS[@]}"
   elif [[ -z $path ]]; then
@@ -81,7 +81,7 @@ cmd_encrypt_all() {
   set_keybase_recipients
   while read -r -d "" passfile; do
     local keybasefile="${passfile%.gpg}.keybase"
-    $GPG -d "${GPG_OPTS[@]}" "$passfile" | keybase encrypt ${KEYBASE_RECIPIENTS[@]} -o $keybasefile
+    $GPG -d "${GPG_OPTS[@]}" "$passfile" | keybase encrypt ${KEYBASE_RECIPIENTS[@]} -o "$keybasefile"
     set_git "$keybasefile"
   done < <(find $PREFIX -iname '*.gpg' -print0)
   git_add_file "$PREFIX" "Reencrypt password store using keybase-id ${KEYBASE_RECIPIENTS[@]}"
@@ -168,7 +168,7 @@ cmd_report() {
   while read -r -d "" passfile; do
       local keytoshow="${passfile%.gpg}"
       local keybasefile="${passfile%.gpg}.keybase"
-      [ ! -f $keybasefile ] && echo ${keytoshow#$PREFIX/}
+      [ ! -f "$keybasefile" ] && echo "${keytoshow#$PREFIX/}"
   done < <(find $PREFIX -iname '*.gpg' -print0)
 
 }
